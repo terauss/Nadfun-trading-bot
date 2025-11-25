@@ -1,0 +1,72 @@
+{
+  "name": "@nadfun/sdk",
+  "version": "0.2.5",
+  "description": "TypeScript SDK for Nad.fun contracts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "examples"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "example:buy": "tsx examples/trade/buy.ts",
+    "example:sell": "tsx examples/trade/sell.ts",
+    "example:sell-permit": "tsx examples/trade/sell_permit.ts",
+    "example:permit-signature": "tsx examples/token/permit_signature.ts",
+    "example:basic-operation": "tsx examples/token/basic_operation.ts",
+    "example:curve-indexer": "tsx examples/stream/curve_indexer.ts",
+    "example:curve-stream": "tsx examples/stream/curve_stream.ts",
+    "example:pool-discovery": "tsx examples/stream/pool_discovery.ts",
+    "example:dex-indexer": "tsx examples/stream/dex_indexer.ts",
+    "example:dex-stream": "tsx examples/stream/dex_stream.ts",
+    "example:gas-estimation": "tsx examples/trade/gas_estimation.ts",
+    "example:sniper": "tsx examples/bots/sniper.ts",
+    "example:bundler": "tsx examples/bots/bundler.ts"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "defi",
+    "trading",
+    "bonding-curve",
+    "nadfun"
+  ],
+  "author": "Nadfun",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naddotfun/nadfun-sdk-typescript.git"
+  },
+  "dependencies": {
+    "viem": "^2.34.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.55.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.1.0",
+    "tsup": "^8.0.1",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
