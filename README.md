@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
-[Features](#-features) • [Installation](#-installation) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Examples](#-examples)
+[🤖 Trading Bots](#-automated-trading-bots) • [Features](#-features) • [Installation](#-installation) • [Quick Start](#-quick-start) • [Documentation](#-documentation)
 
 </div>
 
@@ -16,6 +16,9 @@
 
 ## 📋 Table of Contents
 
+- [🤖 Automated Trading Bots](#-automated-trading-bots)
+  - [🎯 Sniper Bot](#-sniper-bot)
+  - [📦 Bundler Bot](#-bundler-bot)
 - [Overview](#-overview)
 - [Features](#-features)
 - [Installation](#-installation)
@@ -24,7 +27,7 @@
   - [Trading](#-trading)
   - [Token Operations](#-token-operations)
   - [Event Streaming](#-event-streaming)
-  - [Automated Bots](#-automated-bots)
+  - [Bot Implementation Guide](#-bot-implementation-guide)
 - [Examples](#-examples)
 - [Configuration](#-configuration)
 - [API Reference](#-api-reference)
@@ -32,6 +35,136 @@
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
 - [License](#-license)
+
+---
+
+## 🤖 Automated Trading Bots
+
+<div align="center">
+
+### **Ready-to-Use Trading Bots for Automated Strategies**
+
+</div>
+
+The Nad.fun SDK includes two powerful, production-ready bots designed for automated trading on the Monad blockchain. These bots handle all the complexity of gas estimation, slippage protection, and transaction management, allowing you to focus on your trading strategy.
+
+---
+
+### 🎯 Sniper Bot
+
+**Automatically detect and buy new tokens the moment they're created on the bonding curve.**
+
+The Sniper Bot monitors the blockchain in real-time using WebSocket connections and executes buy transactions instantly when new tokens are created. Perfect for catching tokens early before they gain traction.
+
+#### Key Features
+
+- ⚡ **Instant Detection**: WebSocket-based monitoring for zero-latency token detection
+- 🎯 **Auto-Buy**: Automatically executes buy transactions on new token creation
+- 🛡️ **Smart Filtering**: Whitelist, blacklist, or custom filter functions
+- ⏱️ **Rate Limiting**: Built-in protection against excessive transactions
+- 📊 **Real-time Stats**: Track events, successful buys, and failures
+- ⚙️ **Fully Configurable**: Customize buy amount, slippage, gas settings, and more
+
+#### Quick Example
+
+```typescript
+import { SniperBot } from '@nadfun/sdk'
+
+const sniper = new SniperBot({
+  rpcUrl: 'https://your-rpc-endpoint',
+  wsUrl: 'wss://your-ws-endpoint',
+  privateKey: '0x-your-private-key',
+  buyAmount: '0.1',        // MON to spend per buy
+  slippagePercent: 5.0,    // 5% slippage tolerance
+  gasMultiplier: 1.2,      // 20% higher gas for faster execution
+})
+
+sniper.onBuySuccess((event, txHash) => {
+  console.log(`✅ Sniped ${event.name} (${event.symbol})`)
+  console.log(`   TX: ${txHash}`)
+})
+
+await sniper.start() // Start monitoring and auto-buying
+```
+
+#### Use Cases
+
+- 🚀 **Early Token Entry**: Buy tokens immediately upon creation
+- 📈 **Momentum Trading**: Catch trending tokens before they pump
+- 🎯 **Selective Sniping**: Use filters to target specific token types
+- 📊 **Portfolio Building**: Automatically diversify with new launches
+
+[📖 Full Sniper Bot Documentation →](#-sniper-bot-1)
+
+---
+
+### 📦 Bundler Bot
+
+**Execute multiple buy/sell operations in a single transaction sequence.**
+
+The Bundler Bot allows you to batch multiple trading operations together, executing them sequentially with automatic error handling and transaction tracking. Ideal for portfolio rebalancing, multi-token strategies, and MEV operations.
+
+#### Key Features
+
+- 📦 **Batch Operations**: Execute multiple buys/sells in one go
+- 🔄 **Mixed Operations**: Combine buys, sells, and permit-based sells
+- ✅ **Auto-Approvals**: Automatically handles token approvals for sell operations
+- 🎯 **Permit Support**: Gasless sells using EIP-2612 permit signatures
+- 📊 **Detailed Results**: Track success/failure for each operation
+- ⚡ **Optimized Execution**: Smart gas management and transaction ordering
+
+#### Quick Example
+
+```typescript
+import { BundlerBot } from '@nadfun/sdk'
+
+const bundler = new BundlerBot({
+  rpcUrl: 'https://your-rpc-endpoint',
+  privateKey: '0x-your-private-key',
+  defaultSlippagePercent: 5.0,
+})
+
+// Execute multiple operations
+const results = await bundler.execute([
+  { type: 'buy', token: '0xToken1', amountIn: '0.1' },
+  { type: 'buy', token: '0xToken2', amountIn: '0.2' },
+  { type: 'sell', token: '0xToken1', amountIn: '1000' },
+])
+
+results.forEach(result => {
+  if (result.success) {
+    console.log(`✅ ${result.operation.type}: ${result.txHash}`)
+  }
+})
+```
+
+#### Use Cases
+
+- 💼 **Portfolio Rebalancing**: Buy/sell multiple tokens simultaneously
+- 🔄 **Arbitrage Strategies**: Execute multiple trades across tokens
+- 📈 **DCA Strategies**: Dollar-cost average across multiple tokens
+- ⚡ **MEV Operations**: Bundle transactions for optimal execution
+
+[📖 Full Bundler Bot Documentation →](#-bundler-bot-1)
+
+---
+
+### 🚀 Getting Started with Bots
+
+```bash
+# Run Sniper Bot
+bun run example:sniper -- \
+  --rpc-url https://your-rpc-endpoint \
+  --ws-url wss://your-ws-endpoint \
+  --private-key 0x... \
+  --buy-amount 0.1
+
+# Run Bundler Bot
+bun run example:bundler -- \
+  --rpc-url https://your-rpc-endpoint \
+  --private-key 0x... \
+  --operations "buy:0xToken1:0.1,buy:0xToken2:0.2"
+```
 
 ---
 
@@ -51,7 +184,7 @@ Nad.fun is a token launch platform on Monad (similar to Pump.fun on Solana) that
 - ✅ **Complete Trading Suite**: Buy, sell, and quote operations with slippage protection
 - ✅ **Real-time Monitoring**: WebSocket-based event streaming for instant updates
 - ✅ **Gas Optimization**: Intelligent gas estimation with network-based calculations
-- ✅ **Automated Bots**: Pre-built sniper and bundler bots for advanced trading
+- ✅ **🤖 Automated Bots**: Pre-built **Sniper Bot** and **Bundler Bot** for advanced trading
 - ✅ **Type Safety**: Full TypeScript support with comprehensive type definitions
 - ✅ **EIP-2612 Support**: Gasless approvals using permit signatures
 
@@ -193,7 +326,9 @@ stream.onEvent((event) => {
 await stream.start()
 ```
 
-### 4. Use Sniper Bot
+### 4. 🤖 Use Trading Bots
+
+#### 🎯 Sniper Bot - Auto-Buy New Tokens
 
 ```typescript
 import { SniperBot } from '@nadfun/sdk'
@@ -208,11 +343,35 @@ const sniper = new SniperBot({
 })
 
 sniper.onBuySuccess((event, txHash) => {
-  console.log(`✅ Bought ${event.name} (${event.symbol})`)
+  console.log(`✅ Sniped ${event.name} (${event.symbol})`)
   console.log(`   TX: ${txHash}`)
 })
 
-await sniper.start()
+await sniper.start() // Automatically buys new tokens on creation
+```
+
+#### 📦 Bundler Bot - Execute Multiple Trades
+
+```typescript
+import { BundlerBot } from '@nadfun/sdk'
+
+const bundler = new BundlerBot({
+  rpcUrl: 'https://your-rpc-endpoint',
+  privateKey: '0x-your-private-key',
+})
+
+// Execute multiple operations in sequence
+const results = await bundler.execute([
+  { type: 'buy', token: '0xToken1', amountIn: '0.1' },
+  { type: 'buy', token: '0xToken2', amountIn: '0.2' },
+  { type: 'sell', token: '0xToken1', amountIn: '1000' },
+])
+
+results.forEach(result => {
+  if (result.success) {
+    console.log(`✅ ${result.txHash}`)
+  }
+})
 ```
 
 ---
@@ -452,54 +611,83 @@ stream.onSwap((event) => {
 await stream.start()
 ```
 
-### 🤖 Automated Bots
+### 🤖 Bot Implementation Guide
 
-#### Sniper Bot
+#### 🎯 Sniper Bot
 
-Automatically monitors for new token creation and executes buy transactions.
+The Sniper Bot automatically monitors for new token creation and executes buy transactions with configurable filters and rate limiting.
+
+**Configuration Options:**
 
 ```typescript
 import { SniperBot } from '@nadfun/sdk'
 
 const sniper = new SniperBot({
-  rpcUrl: 'https://your-rpc-endpoint',
-  wsUrl: 'wss://your-ws-endpoint',
-  privateKey: '0x-your-private-key',
-  buyAmount: '0.1', // MON to spend per buy
-  slippagePercent: 5.0,
-  gasMultiplier: 1.2, // 20% higher gas
-  minBuyInterval: 1000, // ms between buys
-  autoBuy: true,
+  rpcUrl: 'https://your-rpc-endpoint',      // HTTP RPC for transactions
+  wsUrl: 'wss://your-ws-endpoint',          // WebSocket for event streaming
+  privateKey: '0x-your-private-key',        // Wallet private key
+  buyAmount: '0.1',                          // MON to spend per buy
+  slippagePercent: 5.0,                     // Slippage tolerance
+  gasMultiplier: 1.2,                       // Gas price multiplier (20% higher)
+  minBuyInterval: 1000,                     // Minimum ms between buys
+  autoBuy: true,                            // Enable/disable auto-buy
   
-  // Optional filters
-  tokenWhitelist: ['0xToken1', '0xToken2'],
-  tokenBlacklist: ['0xToken3'],
-  tokenFilter: async (event) => {
-    // Custom filter logic
-    return event.name.length > 3
+  // Optional: Token filtering
+  tokenWhitelist: ['0xToken1', '0xToken2'],  // Only buy these tokens
+  tokenBlacklist: ['0xToken3'],             // Skip these tokens
+  tokenFilter: async (event) => {          // Custom filter function
+    return event.name.length > 3 && event.symbol.length <= 5
   },
 })
+```
 
-// Set up callbacks
+**Event Callbacks:**
+
+```typescript
+// Success callback
 sniper.onBuySuccess((event, txHash) => {
-  console.log(`✅ Bought ${event.name} at ${txHash}`)
+  console.log(`✅ Sniped ${event.name} (${event.symbol})`)
+  console.log(`   Token: ${event.token}`)
+  console.log(`   TX: ${txHash}`)
 })
 
+// Error callback
 sniper.onBuyError((event, error) => {
-  console.error(`❌ Failed to buy ${event.name}:`, error)
+  console.error(`❌ Failed to snipe ${event.name}:`, error.message)
 })
 
 // Start monitoring
 await sniper.start()
 
-// Get statistics
+// Get real-time statistics
 const stats = sniper.getStats()
-console.log(`Events: ${stats.totalEvents}, Buys: ${stats.successfulBuys}`)
+console.log(`Events: ${stats.totalEvents}`)
+console.log(`Successful: ${stats.successfulBuys}`)
+console.log(`Failed: ${stats.failedBuys}`)
 ```
 
-#### Bundler Bot
+**Advanced Filtering:**
 
-Execute multiple buy/sell operations in sequence.
+```typescript
+const sniper = new SniperBot({
+  // ... basic config
+  tokenFilter: async (event) => {
+    // Check token metadata
+    const token = new Token(rpcUrl, privateKey)
+    const metadata = await token.getMetadata(event.token)
+    
+    // Only buy tokens with specific criteria
+    return metadata.totalSupply > parseEther('1000000') &&
+           metadata.name.length > 5
+  },
+})
+```
+
+#### 📦 Bundler Bot
+
+Execute multiple buy/sell operations in sequence with automatic error handling and transaction tracking.
+
+**Basic Usage:**
 
 ```typescript
 import { BundlerBot } from '@nadfun/sdk'
@@ -507,9 +695,9 @@ import { BundlerBot } from '@nadfun/sdk'
 const bundler = new BundlerBot({
   rpcUrl: 'https://your-rpc-endpoint',
   privateKey: '0x-your-private-key',
-  defaultSlippagePercent: 5.0,
-  gasMultiplier: 1.0,
-  waitForConfirmation: true,
+  defaultSlippagePercent: 5.0,              // Default slippage for all operations
+  gasMultiplier: 1.0,                       // Gas price multiplier
+  waitForConfirmation: true,                // Wait for each TX before next
 })
 
 // Execute multiple operations
@@ -524,10 +712,46 @@ const results = await bundler.execute([
 results.forEach((result, i) => {
   if (result.success) {
     console.log(`✅ Operation ${i + 1}: ${result.txHash}`)
+    console.log(`   Expected: ${formatUnits(result.expectedAmount!, 18)}`)
   } else {
     console.error(`❌ Operation ${i + 1}: ${result.error}`)
   }
 })
+```
+
+**Operation Types:**
+
+- `buy`: Buy tokens with MON
+  - `amountIn`: Amount in MON (e.g., "0.1")
+- `sell`: Sell tokens for MON
+  - `amountIn`: Amount in tokens (e.g., "1000")
+  - Automatically handles token approval
+- `sellPermit`: Sell tokens using EIP-2612 permit (gasless approval)
+  - `amountIn`: Amount in tokens
+  - No approval transaction needed
+
+**Sequential Execution with Dependencies:**
+
+```typescript
+// First, buy tokens
+const buyResults = await bundler.execute([
+  { type: 'buy', token: '0xToken1', amountIn: '0.1' },
+  { type: 'buy', token: '0xToken2', amountIn: '0.2' },
+])
+
+// Wait for all buys to confirm
+await Promise.all(
+  buyResults
+    .filter(r => r.success && r.txHash)
+    .map(r => bundler.trade.publicClient.waitForTransactionReceipt({ 
+      hash: r.txHash as `0x${string}` 
+    }))
+)
+
+// Then sell
+const sellResults = await bundler.execute([
+  { type: 'sell', token: '0xToken1', amountIn: '1000' },
+])
 ```
 
 ---
@@ -537,6 +761,29 @@ results.forEach((result, i) => {
 The SDK includes comprehensive examples in the `examples/` directory.
 
 ### Running Examples
+
+#### 🤖 Bot Examples (Recommended)
+
+**Start here if you want to use the pre-built trading bots:**
+
+```bash
+# 🎯 Sniper Bot - Auto-buy new tokens on creation
+bun run example:sniper -- \
+  --rpc-url https://your-rpc-endpoint \
+  --ws-url wss://your-ws-endpoint \
+  --private-key 0x... \
+  --buy-amount 0.1 \
+  --slippage 5.0 \
+  --gas-multiplier 1.2
+
+# 📦 Bundler Bot - Execute multiple trades in sequence
+bun run example:bundler -- \
+  --rpc-url https://your-rpc-endpoint \
+  --private-key 0x... \
+  --operations "buy:0xToken1:0.1,buy:0xToken2:0.2,sell:0xToken1:1000"
+```
+
+📖 **See [examples/bots/README.md](examples/bots/README.md) for comprehensive bot documentation.**
 
 #### Trading Examples
 
@@ -669,12 +916,44 @@ All contract addresses are defined in `src/constants.ts`:
 - `CurveIndexer`: Historical bonding curve event indexing
 - `DexIndexer`: Historical DEX event indexing
 
-### Bot Classes
+### 🤖 Bot Classes
 
-- `SniperBot`: Automated token sniper
-- `BundlerBot`: Batch transaction executor
+#### SniperBot
 
-See TypeScript definitions for complete API documentation.
+Automated token sniper that monitors for new token creation and executes buy transactions.
+
+**Key Methods:**
+- `constructor(config: SniperConfig)`: Initialize sniper bot
+- `start()`: Start monitoring and auto-buying
+- `stop()`: Stop the bot
+- `onBuySuccess(callback)`: Register success callback
+- `onBuyError(callback)`: Register error callback
+- `getStats()`: Get real-time statistics
+- `isActive()`: Check if bot is running
+
+**Configuration:**
+- `rpcUrl`, `wsUrl`, `privateKey`: Network and wallet configuration
+- `buyAmount`: MON to spend per buy
+- `slippagePercent`: Slippage tolerance
+- `gasMultiplier`: Gas price multiplier
+- `tokenWhitelist`, `tokenBlacklist`: Token filtering
+- `tokenFilter`: Custom filter function
+
+#### BundlerBot
+
+Batch transaction executor for multiple buy/sell operations.
+
+**Key Methods:**
+- `constructor(config: BundlerConfig)`: Initialize bundler bot
+- `execute(operations: BundledOperation[])`: Execute multiple operations
+- `getAddress()`: Get wallet address
+
+**Operation Types:**
+- `{ type: 'buy', token, amountIn }`: Buy tokens
+- `{ type: 'sell', token, amountIn }`: Sell tokens
+- `{ type: 'sellPermit', token, amountIn }`: Sell with permit
+
+See TypeScript definitions in `src/bots/` for complete API documentation.
 
 ---
 
